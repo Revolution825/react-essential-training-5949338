@@ -1,9 +1,12 @@
+/* eslint-disable react/prop-types */
+import { useEffect, useReducer } from "react";
 import "./App.css";
+import chef from "./images/chef.jpg";
 
 function Header({ name, year }) {
   return (
     <header>
-      <h1>{name}'s Kitchen</h1>
+      <h1>{name}&apos;s Kitchen</h1>
       <p>Copyright {year}</p>
     </header>
   );
@@ -20,23 +23,56 @@ const dishObjects = items.map((dish, i) => ({
   title: dish
 }));
 
-function Main({ dishes }) {
+function Main({ dishes, openStatus, onStatus}) {
   return (
-    <ul>
-      {dishes.map((dish) => (
-        <li key={dish.id} style={{ listStyleType: "none" }}>
-          {dish.title}
-        </li>
-      ))}
-    </ul>
+    <>
+      <div>
+        <button onClick={() => onStatus(true)}>I want to be open </button>
+        <h2>Welcome to this beautiful restaurant! 
+          {openStatus ? "open" : "closed" } 
+        </h2>
+      </div>
+      <main>
+        <img 
+          src={chef} 
+          height={200} 
+          alt="A photo of a smiling chef"/>
+        <ul>
+          {dishes.map((dish) => (
+            <li key={dish.id} 
+                style={{ listStyleType: "none" }}>
+                {dish.title}
+            </li>
+          ))}
+        </ul>
+      </main>
+    </>
   );
 }
 
 function App() {
+  
+  const [status, toggle] = useReducer(
+    (status) => !status,
+     true
+    );
+
+    useEffect(() => {
+      console.log(`The Restaurant is ${status ? "open" : "closed"}.`)
+    }, [status]);
+
   return (
     <div>
+      <h1>The restaurant is currently {status ? "open" : "closed"}.</h1>
+      <button onClick={toggle}>
+        {status ? "Close" : "Open"} Restaurant
+      </button>
       <Header name="Alex" year={new Date().getFullYear()} />
-      <Main dishes={dishObjects} />
+      <Main 
+        dishes={dishObjects} 
+        openStatus={status} 
+        onStatus={toggle}
+      />
     </div>
   );
 }
